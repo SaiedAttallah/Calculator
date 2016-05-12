@@ -21,7 +21,11 @@ public class CalculatorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calculator);
         screen = (TextView)findViewById(R.id.textView);
-        screen.setText(display);
+        try {
+            screen.setText(display);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void updateScreen(){
@@ -29,13 +33,23 @@ public class CalculatorActivity extends AppCompatActivity {
     }
 
     public void onClickNumber(View v){
-        if (result != ""){
+        if (!(result.isEmpty())){
             clear();
             updateScreen();
         }
 
         Button b = (Button) v;
         display += b.getText();
+        updateScreen();
+    }
+
+    public void onClickSign(View v){
+        if (!(result.isEmpty())){
+            clear();
+            updateScreen();
+        }
+
+        display += "-";
         updateScreen();
     }
 
@@ -50,17 +64,17 @@ public class CalculatorActivity extends AppCompatActivity {
     }
 
     public void onClickOperator(View v){
-        if (display == "") return;
+        if (display.isEmpty()) return;
 
         Button b = (Button)v;
 
-        if (result != ""){
+        if (!(result.isEmpty())){
             String tempDisplay = result;
             clear();
             display = tempDisplay;
         }
 
-        if (currentOperator != ""){
+        if (!(currentOperator.isEmpty())){
             Log.d("CalcX", "" + display.charAt(display.length()-1));
             if (isOperator(display.charAt(display.length()-1))){
                 display = display.replace(display.charAt(display.length()-1), b.getText().charAt(0));
@@ -90,10 +104,25 @@ public class CalculatorActivity extends AppCompatActivity {
         updateScreen();
     }
 
+    public void onClickDelete(View v){
+        if (!(result.isEmpty())) return;
+
+        if (display.length() >= 1){
+            display = display.substring(0, display.length()-1);
+            updateScreen();
+        }
+
+    }
+
     private double operate(String x, String y, String op){
         switch (op){
             case "+": return Double.valueOf(x) + Double.valueOf(y);
-            case "-": return Double.valueOf(x) - Double.valueOf(y);
+            case "-":
+                try {
+                return Double.valueOf(x) - Double.valueOf(y);
+                } catch (Exception e) {
+                    Log.d("Calc", e.getMessage());
+                }
             case "×": return Double.valueOf(x) * Double.valueOf(y);
             case "÷":
                 try {
@@ -106,7 +135,8 @@ public class CalculatorActivity extends AppCompatActivity {
     }
 
     private boolean getResult(){
-        if (currentOperator == "") return false;
+        if (currentOperator.isEmpty()) return false;
+
         String[] operation = display.split(Pattern.quote(currentOperator));
 
         if (operation.length < 2) return false;
@@ -116,7 +146,7 @@ public class CalculatorActivity extends AppCompatActivity {
     }
 
     public void onClickEqual(View v){
-        if (display == "") return;
+        if (display.isEmpty()) return;
 
         if (!getResult()) return;
         screen.setText(display + "\n" + String.valueOf(result));

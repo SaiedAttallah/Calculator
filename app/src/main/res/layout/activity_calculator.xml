@@ -20,8 +20,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3"
         android:layout_below="@+id/textView"
+        android:layout_weight="3"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -84,17 +84,18 @@
                 android:textSize="50dp" />
 
             <Button
-                android:id="@+id/button0"
+                android:id="@+id/button19"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_margin="0dp"
                 android:layout_weight="1"
                 android:background="#4d4d4d"
-                android:onClick="onClickNumber"
-                android:text="0"
+                android:text="+/-"
                 android:textColor="#ffffff"
-                android:textSize="50dp" />
+                android:textSize="50dp"
+                android:onClick="onClickSign" />
+
+
         </LinearLayout>
 
         <LinearLayout
@@ -112,7 +113,7 @@
                 android:layout_marginBottom="1dp"
                 android:layout_weight="1"
 
-                android:background="#4d4d4d"
+                android:background="#ff8000"
                 android:onClick="onClickOperator"
                 android:text="÷"
                 android:textColor="#ffffff"
@@ -158,15 +159,17 @@
                 android:textSize="50dp" />
 
             <Button
-                android:id="@+id/buttonDecimal"
+                android:id="@+id/button0"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:background="#4d4d4d"
-                android:text="."
+                android:onClick="onClickNumber"
+                android:text="0"
                 android:textColor="#ffffff"
                 android:textSize="50dp" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -183,7 +186,7 @@
                 android:layout_height="0dp"
                 android:layout_marginBottom="1dp"
                 android:layout_weight="1"
-                android:background="#4d4d4d"
+                android:background="#ff8000"
                 android:onClick="onClickOperator"
                 android:text="×"
                 android:textColor="#ffffff"
@@ -229,15 +232,17 @@
                 android:textSize="50dp" />
 
             <Button
-                android:id="@+id/button19"
+                android:id="@+id/buttonDecimal"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:background="#4d4d4d"
-                android:text="+/-"
+                android:onClick="onClickNumber"
+                android:text="."
                 android:textColor="#ffffff"
                 android:textSize="50dp" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -254,10 +259,11 @@
                 android:layout_height="0dp"
                 android:layout_marginBottom="1dp"
                 android:layout_weight="1"
-                android:background="#4d4d4d"
-                android:text="D"
+                android:background="#ff00ff"
+                android:text="&lt;&lt;"
                 android:textColor="#ffffff"
-                android:textSize="50dp" />
+                android:textSize="50dp"
+                android:onClick="onClickDelete" />
 
 
             <Button
@@ -267,7 +273,7 @@
                 android:layout_height="0dp"
                 android:layout_marginBottom="1dp"
                 android:layout_weight="1"
-                android:background="#4d4d4d"
+                android:background="#ff8000"
                 android:onClick="onClickOperator"
                 android:text="-"
                 android:textColor="#ffffff"
@@ -281,32 +287,18 @@
                 android:layout_height="0dp"
                 android:layout_marginBottom="1dp"
                 android:layout_weight="1"
-                android:background="#4d4d4d"
+                android:background="#ff8000"
                 android:onClick="onClickOperator"
                 android:text="+"
                 android:textColor="#ffffff"
                 android:textSize="50dp" />
-
-
-            <Button
-                android:id="@+id/button16"
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginBottom="1dp"
-                android:layout_weight="1"
-                android:background="#4d4d4d"
-                android:text="( )"
-                android:textColor="#ffffff"
-                android:textSize="50dp" />
-
 
             <Button
                 android:id="@+id/buttonEquals"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:background="#00ff00"
                 android:onClick="onClickEqual"
                 android:text="="
