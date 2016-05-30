@@ -7,149 +7,62 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.cosmos.calculator.Injection.GraphProvider;
+
 import java.util.regex.Pattern;
 
 public class CalculatorActivity extends AppCompatActivity {
 
     private TextView screen;
-    private String display = "";
-    private String currentOperator = "";
-    private String result = "";
+    private CalculatorOperations calculatorOperations = new CalculatorOperations();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calculator);
         screen = (TextView)findViewById(R.id.textView);
-        try {
-            screen.setText(display);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        //screen.setText(calculatorOperations.getDisplay());
     }
 
-    private void updateScreen(){
-        screen.setText(display);
-    }
+//    public void updateScreen(String s){
+//        screen.setText(s);
+//    }
 
     public void onClickNumber(View v){
-        if (!(result.isEmpty())){
-            clear();
-            updateScreen();
-        }
-
         Button b = (Button) v;
-        display += b.getText();
-        updateScreen();
+        screen.setText(calculatorOperations.numberClicked(b.getText().toString()));
     }
 
     public void onClickSign(View v){
-        if (!(result.isEmpty())){
-            clear();
-            updateScreen();
-        }
-
-        display += "-";
-        updateScreen();
-    }
-
-    private boolean isOperator(char op){
-        switch (op){
-            case '+':
-            case '-':
-            case '×':
-            case '÷': return true;
-            default: return false;
-        }
+        screen.setText(calculatorOperations.signClicked());
     }
 
     public void onClickOperator(View v){
-        if (display.isEmpty()) return;
-
         Button b = (Button)v;
-
-        if (!(result.isEmpty())){
-            String tempDisplay = result;
-            clear();
-            display = tempDisplay;
-        }
-
-        if (!(currentOperator.isEmpty())){
-            Log.d("CalcX", "" + display.charAt(display.length()-1));
-            if (isOperator(display.charAt(display.length()-1))){
-                display = display.replace(display.charAt(display.length()-1), b.getText().charAt(0));
-                updateScreen();
-                return;
-            }else {
-                getResult();
-                display = result;
-                result = "";
-            }
-            currentOperator = b.getText().toString();
-        }
-
-        display += b.getText();
-        currentOperator = b.getText().toString();
-        updateScreen();
-    }
-
-    private void clear(){
-        display = "";
-        currentOperator = "";
-        result = "";
-    }
-
-    public void onClickClear(View v){
-        clear();
-        updateScreen();
-    }
-
-    public void onClickDelete(View v){
-        if (!(result.isEmpty())) return;
-
-        if (display.length() >= 1){
-            display = display.substring(0, display.length()-1);
-            updateScreen();
-        }
-
-    }
-
-    private double operate(String x, String y, String op){
-        switch (op){
-            case "+": return Double.valueOf(x) + Double.valueOf(y);
-            case "-":
-                try {
-                return Double.valueOf(x) - Double.valueOf(y);
-                } catch (Exception e) {
-                    Log.d("Calc", e.getMessage());
-                }
-            case "×": return Double.valueOf(x) * Double.valueOf(y);
-            case "÷":
-                try {
-                    return Double.valueOf(x) / Double.valueOf(y);
-                } catch (Exception e) {
-                    Log.d("Calc", e.getMessage());
-                }
-            default: return -1;
-        }
-    }
-
-    private boolean getResult(){
-        if (currentOperator.isEmpty()) return false;
-
-        String[] operation = display.split(Pattern.quote(currentOperator));
-
-        if (operation.length < 2) return false;
-
-        result = String.valueOf(operate(operation[0], operation[1], currentOperator));
-        return true;
+        screen.setText(calculatorOperations.operatorClicked(b.getText().toString()));
     }
 
     public void onClickEqual(View v){
-        if (display.isEmpty()) return;
+        if (calculatorOperations.getDisplay().isEmpty()) return;
 
-        if (!getResult()) return;
-        screen.setText(display + "\n" + String.valueOf(result));
+        if (!calculatorOperations.opResult()) return;
+        screen.setText(calculatorOperations.getDisplay() + "\n" + calculatorOperations.getResult());
+    }
+
+    public void onClickClear(View v){
+        calculatorOperations.clear();
+        screen.setText(calculatorOperations.getDisplay());
+    }
+
+    public void onClickDelete(View v){
+        if (!(calculatorOperations.getResult().isEmpty())) return;
+
+        if (calculatorOperations.getDisplay().length() >= 1){
+            calculatorOperations.setDisplay(calculatorOperations.getDisplay().substring(0, calculatorOperations.getDisplay().length()-1));
+            screen.setText(calculatorOperations.getDisplay());
+        }
 
     }
+
+
 }
