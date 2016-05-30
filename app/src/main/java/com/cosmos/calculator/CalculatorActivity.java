@@ -46,9 +46,10 @@ public class CalculatorActivity extends AppCompatActivity {
     }
 
     public void onClickDelete(View v){
-        if (calculatorOperations.deleteClicked() != null) {
-            screen.setText(calculatorOperations.deleteClicked());
-        }
+        screen.setText(calculatorOperations.deleteClicked());
+//        if (calculatorOperations.deleteClicked() != null) {
+//            screen.setText(calculatorOperations.deleteClicked());
+//        }
     }
 
 

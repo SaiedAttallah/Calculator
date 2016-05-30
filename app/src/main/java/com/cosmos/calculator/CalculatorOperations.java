@@ -111,7 +111,7 @@ public class CalculatorOperations {
     }
 
     public String deleteClicked(){
-        if (!(result.isEmpty())) return null;
+        //if (!(result.isEmpty())) return null;
 
         if (display.length() >= 1){
             display = display.substring(0, display.length()-1);
