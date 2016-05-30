@@ -1,9 +1,6 @@
 package com.cosmos.calculator;
 
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
 import java.util.regex.Pattern;
 
@@ -15,27 +12,6 @@ public class CalculatorOperations {
     private static String display = "";
     private static String currentOperator = "";
     private static String result = "";
-
-    public void setDisplay(String display) {
-        this.display = display;
-    }
-    public String getDisplay() {
-        return display;
-    }
-
-    public void setCurrentOperator(String currentOperator) {
-        this.currentOperator = currentOperator;
-    }
-    public String getCurrentOperator() {
-        return currentOperator;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
-    }
-    public String getResult() {
-        return currentOperator;
-    }
 
     public String numberClicked(String s){
         if (!(result.isEmpty())){
@@ -73,7 +49,7 @@ public class CalculatorOperations {
                 display = display.replace(display.charAt(display.length()-1), s.charAt(0));
                 return display;
             }else {
-                getResult();
+                calculateResult();
                 display = result;
                 result = "";
             }
@@ -83,22 +59,6 @@ public class CalculatorOperations {
         display += s;
         currentOperator = s;
         return display;
-    }
-
-    public String equalClicked(){
-        if (!(result.isEmpty())){
-            clear();
-            return display;
-        }
-
-        display += "-";
-        return display;
-    }
-
-    public void clear(){
-        display = "";
-        currentOperator = "";
-        result = "";
     }
 
     public boolean isOperator(char op){
@@ -131,7 +91,7 @@ public class CalculatorOperations {
         }
     }
 
-    public boolean opResult(){
+    public boolean calculateResult(){
         if (currentOperator.isEmpty()) return false;
 
         String[] operation = display.split(Pattern.quote(currentOperator));
@@ -142,5 +102,32 @@ public class CalculatorOperations {
         return true;
     }
 
+    public String equalClicked(){
+        if (display.isEmpty()) return null;
+
+        if (!calculateResult()) return null;
+        String s = display + "\n" + String.valueOf(result);
+        return s;
+    }
+
+    public String deleteClicked(){
+        if (!(result.isEmpty())) return null;
+
+        if (display.length() >= 1){
+            display = display.substring(0, display.length()-1);
+        }
+        return display;
+    }
+
+    public String clearClicked(){
+        clear();
+        return display;
+    }
+
+    public void clear(){
+        display = "";
+        currentOperator = "";
+        result = "";
+    }
 
 }

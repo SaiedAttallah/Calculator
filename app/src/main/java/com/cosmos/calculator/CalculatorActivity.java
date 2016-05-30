@@ -21,12 +21,7 @@ public class CalculatorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calculator);
         screen = (TextView)findViewById(R.id.textView);
-        //screen.setText(calculatorOperations.getDisplay());
     }
-
-//    public void updateScreen(String s){
-//        screen.setText(s);
-//    }
 
     public void onClickNumber(View v){
         Button b = (Button) v;
@@ -43,25 +38,17 @@ public class CalculatorActivity extends AppCompatActivity {
     }
 
     public void onClickEqual(View v){
-        if (calculatorOperations.getDisplay().isEmpty()) return;
-
-        if (!calculatorOperations.opResult()) return;
-        screen.setText(calculatorOperations.getDisplay() + "\n" + calculatorOperations.getResult());
+        screen.setText(calculatorOperations.equalClicked());
     }
 
     public void onClickClear(View v){
-        calculatorOperations.clear();
-        screen.setText(calculatorOperations.getDisplay());
+        screen.setText(calculatorOperations.clearClicked());
     }
 
     public void onClickDelete(View v){
-        if (!(calculatorOperations.getResult().isEmpty())) return;
-
-        if (calculatorOperations.getDisplay().length() >= 1){
-            calculatorOperations.setDisplay(calculatorOperations.getDisplay().substring(0, calculatorOperations.getDisplay().length()-1));
-            screen.setText(calculatorOperations.getDisplay());
+        if (calculatorOperations.deleteClicked() != null) {
+            screen.setText(calculatorOperations.deleteClicked());
         }
-
     }
 
 
