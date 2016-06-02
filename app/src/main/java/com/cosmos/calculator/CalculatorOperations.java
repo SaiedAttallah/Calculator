@@ -9,44 +9,86 @@ import java.util.regex.Pattern;
  */
 public class CalculatorOperations {
 
-    private static String display = "";
-    private static String currentOperator = "";
-    private static String result = "";
+    protected String display = "";
+    protected String currentOperator = "";
+    protected String result = "";
+    protected Boolean decPoint = false;
+
+    public void setDisplay(String display) {
+        this.display = display;
+    }
+
+    public void setCurrentOperator(String currentOperator) {
+        this.currentOperator = currentOperator;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    public void setDecPoint(Boolean decPoint) {
+        this.decPoint = decPoint;
+    }
+
+    public String getDisplay() {
+        return display;
+    }
+
+    public String getCurrentOperator() {
+        return currentOperator;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public Boolean getDecPoint() {
+        return decPoint;
+    }
 
     public String numberClicked(String s){
         if (!(result.isEmpty())){
             clear();
-            return display;
+            display += s;
+        }else display += s;
+
+        return display;
+    }
+
+    public String decimalPointClicked(String s){
+        if (!(result.isEmpty())){
+            clear();
+            display += s;
+            decPoint = !decPoint;
         }
 
-        display += s;
+        if(!decPoint){
+            display += s;
+            decPoint = !decPoint;
+        }
         return display;
     }
 
     public String signClicked(){
         if (!(result.isEmpty())){
             clear();
-            return display;
+            display += "-";
         }
-
-        display += "-";
+        if (display.isEmpty() || display.charAt(display.length()-1) == '+' || display.charAt(display.length()-1) == '×' || display.charAt(display.length()-1) == '÷'){
+            display += "-";
+        }
         return display;
     }
 
     public String operatorClicked(String s){
 
-        if (display.isEmpty()) return null;
-
-        if (!(result.isEmpty())){
-            String tempDisplay = result;
-            clear();
-            display = tempDisplay;
-        }
+        if (display.isEmpty()) return display;
 
         if (!(currentOperator.isEmpty())){
-            Log.d("CalcX", "" + display.charAt(display.length()-1));
+            //Log.d("CalcX", "" + display.charAt(display.length()-1));
             if (isOperator(display.charAt(display.length()-1))){
                 display = display.replace(display.charAt(display.length()-1), s.charAt(0));
+                currentOperator = s;
                 return display;
             }else {
                 calculateResult();
@@ -56,12 +98,21 @@ public class CalculatorOperations {
             currentOperator = s;
         }
 
+        if (!(result.isEmpty())){
+            String tempDisplay = result;
+            clear();
+            display = tempDisplay;
+        }
+
         display += s;
         currentOperator = s;
+        if (decPoint){
+            decPoint = !decPoint;
+        }
         return display;
     }
 
-    public boolean isOperator(char op){
+    private boolean isOperator(char op){
         switch (op){
             case '+':
             case '-':
@@ -91,7 +142,7 @@ public class CalculatorOperations {
         }
     }
 
-    public boolean calculateResult(){
+    private boolean calculateResult(){
         if (currentOperator.isEmpty()) return false;
 
         String[] operation = display.split(Pattern.quote(currentOperator));
@@ -105,15 +156,22 @@ public class CalculatorOperations {
     public String equalClicked(){
         if (display.isEmpty()) return null;
 
-        if (!calculateResult()) return null;
+        if (!calculateResult()) return display;
         String s = display + "\n" + String.valueOf(result);
+        decPoint = !decPoint;
         return s;
     }
 
     public String deleteClicked(){
-        //if (!(result.isEmpty())) return null;
+        if (!(result.isEmpty())) {
+            result = "";
+            return display;
+        }
 
         if (display.length() >= 1){
+            if (display.length()-1 == '.'){
+                decPoint = !decPoint;
+            }
             display = display.substring(0, display.length()-1);
         }
         return display;
@@ -124,10 +182,12 @@ public class CalculatorOperations {
         return display;
     }
 
-    public void clear(){
+    private void clear(){
+        if (decPoint){
+            decPoint = !decPoint;
+        }
         display = "";
         currentOperator = "";
         result = "";
     }
-
 }
