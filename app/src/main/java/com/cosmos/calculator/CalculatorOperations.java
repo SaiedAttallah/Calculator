@@ -1,7 +1,7 @@
 package com.cosmos.calculator;
 
-import android.util.Log;
-
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.regex.Pattern;
 
 /**
@@ -13,6 +13,7 @@ public class CalculatorOperations {
     protected String currentOperator = "";
     protected String result = "";
     protected Boolean decPoint = false;
+    protected Boolean fakeNegative = false;
 
     public void setDisplay(String display) {
         this.display = display;
@@ -28,6 +29,10 @@ public class CalculatorOperations {
 
     public void setDecPoint(Boolean decPoint) {
         this.decPoint = decPoint;
+    }
+
+    public void setFakeNegative(Boolean fakeNegative) {
+        this.fakeNegative = fakeNegative;
     }
 
     public String getDisplay() {
@@ -46,6 +51,10 @@ public class CalculatorOperations {
         return decPoint;
     }
 
+    public Boolean getFakeNegative() {
+        return fakeNegative;
+    }
+
     public String numberClicked(String s){
         if (!(result.isEmpty())){
             clear();
@@ -55,15 +64,15 @@ public class CalculatorOperations {
         return display;
     }
 
-    public String decimalPointClicked(String s){
+    public String decimalPointClicked(){
         if (!(result.isEmpty())){
             clear();
-            display += s;
+            display += ".";
             decPoint = !decPoint;
         }
 
         if(!decPoint){
-            display += s;
+            display += ".";
             decPoint = !decPoint;
         }
         return display;
@@ -84,10 +93,16 @@ public class CalculatorOperations {
 
         if (display.isEmpty()) return display;
 
+        if (!(result.isEmpty())){
+            String tempDisplay = result;
+            clear();
+            display = tempDisplay;
+        }
+
         if (!(currentOperator.isEmpty())){
             //Log.d("CalcX", "" + display.charAt(display.length()-1));
             if (isOperator(display.charAt(display.length()-1))){
-                display = display.replace(display.charAt(display.length()-1), s.charAt(0));
+                display = display.substring(0,display.length()-1) + s;
                 currentOperator = s;
                 return display;
             }else {
@@ -95,13 +110,6 @@ public class CalculatorOperations {
                 display = result;
                 result = "";
             }
-            currentOperator = s;
-        }
-
-        if (!(result.isEmpty())){
-            String tempDisplay = result;
-            clear();
-            display = tempDisplay;
         }
 
         display += s;
@@ -123,42 +131,71 @@ public class CalculatorOperations {
     }
 
     private double operate(String x, String y, String op){
+        double res = -1;
         switch (op){
-            case "+": return Double.valueOf(x) + Double.valueOf(y);
-            case "-":
-                try {
-                    return Double.valueOf(x) - Double.valueOf(y);
-                } catch (Exception e) {
-                    Log.d("Calc", e.getMessage());
-                }
-            case "×": return Double.valueOf(x) * Double.valueOf(y);
-            case "÷":
-                try {
-                    return Double.valueOf(x) / Double.valueOf(y);
-                } catch (Exception e) {
-                    Log.d("Calc", e.getMessage());
-                }
-            default: return -1;
+            case "+": res = Double.valueOf(x) + Double.valueOf(y);
+                break;
+            case "-": res = Double.valueOf(x) - Double.valueOf(y);
+                break;
+            case "×": res = Double.valueOf(x) * Double.valueOf(y);
+                break;
+            case "÷": res = Double.valueOf(x) / Double.valueOf(y);
+                break;
+            //default: return res;
         }
+        return res;
     }
 
     private boolean calculateResult(){
         if (currentOperator.isEmpty()) return false;
+        String[] operation;
+        if (display.charAt(0) == '-' && currentOperator.equals("-")){
+            display = display.substring(1, display.length());
+            operation = display.split(Pattern.quote(currentOperator));
 
-        String[] operation = display.split(Pattern.quote(currentOperator));
+            if (operation.length < 2) return false;
 
-        if (operation.length < 2) return false;
+            Double res = (-1 * Double.valueOf(operation[0]) - Double.valueOf(operation[1]));
+            DecimalFormat df = new DecimalFormat();
+            df.setRoundingMode(RoundingMode.CEILING);
+            result = String.valueOf(df.format(res));
+            fakeNegative = true;
+        }else if(display.charAt(0) == '∞') {
+            result = "∞";
+        }else{
+            operation = display.split(Pattern.quote(currentOperator));
 
-        result = String.valueOf(operate(operation[0], operation[1], currentOperator));
+            if (operation.length < 2) return false;
+
+            Double res = operate(operation[0], operation[1], currentOperator);
+            DecimalFormat df = new DecimalFormat();
+            df.setRoundingMode(RoundingMode.CEILING);
+            result = String.valueOf(df.format(res));
+        }
         return true;
     }
 
     public String equalClicked(){
-        if (display.isEmpty()) return null;
+        if (display.isEmpty()) return display;
 
-        if (!calculateResult()) return display;
-        String s = display + "\n" + String.valueOf(result);
-        decPoint = !decPoint;
+        String s;
+
+        if (!calculateResult()){
+            return display;
+        }else {
+            if (fakeNegative){
+                s = "-" + display + "\n" + result;
+                fakeNegative = false;
+            }else {
+                s = display + "\n" + result;
+            }
+
+            if (decPoint){
+                decPoint = !decPoint;
+            }
+        }
+
+
         return s;
     }
 
@@ -169,8 +206,11 @@ public class CalculatorOperations {
         }
 
         if (display.length() >= 1){
-            if (display.length()-1 == '.'){
+            if (display.charAt(display.length()-1) == '.'){
                 decPoint = !decPoint;
+            }
+            if (isOperator(display.charAt(display.length()-1))){
+                currentOperator = "";
             }
             display = display.substring(0, display.length()-1);
         }

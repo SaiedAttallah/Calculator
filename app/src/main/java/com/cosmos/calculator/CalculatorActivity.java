@@ -33,8 +33,7 @@ public class CalculatorActivity extends AppCompatActivity {
     }
 
     public void onClickDecimalPoint(View v){
-        this.button = (Button) v;
-        this.screen.setText(calculatorOperations.decimalPointClicked(this.button.getText().toString()));
+        this.screen.setText(calculatorOperations.decimalPointClicked());
     }
 
     public void onClickSign(View v){
